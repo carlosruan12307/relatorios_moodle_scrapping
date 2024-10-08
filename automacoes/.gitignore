@@ -1,6 +1,6 @@
 node_modules
-relatorios/relatoriosPrints/screenshots_encontrointrodutorio/
-relatorios/relatoriosPrints/screenshots_forum/
-relatorios/relatoriosPrints/screenshots_questoes/presencialEad/
-relatorios/relatoriosPrints/screenshots_questoes/Teorica/
-relatorios/relatoriosPrints/screenshots_questoes/Vivencial/
+relatorios/relatoriosPrints/screenshots_encontrointrodutorio/*
+relatorios/relatoriosPrints/screenshots_forum/*
+relatorios/relatoriosPrints/screenshots_questoes/presencialEad/*
+relatorios/relatoriosPrints/screenshots_questoes/Teorica/*
+relatorios/relatoriosPrints/screenshots_questoes/Vivencial/*
