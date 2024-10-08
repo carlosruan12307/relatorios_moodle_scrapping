@@ -43,7 +43,7 @@ let driver = new Builder()
   const configs = {fs,Builder,By,Key,until,chrome,options,driver}
   
   await loginMoodle("730549654","20200911",configs);
-  await driver.get("https://ead.unifor.br/ava/course/view.php?id=69923")
+  await driver.get("https://ead.unifor.br/ava/course/view.php?id=69412")
   var oneTimeClickEdADM = await ClicarBotaoEditarADM(configs);
   oneTimeClickEdADM();
   
@@ -82,16 +82,7 @@ const horaAbertura = dataConvertida.format('HH:mm');      // "00:00"
     let currentUser = {...user}
       currentUser.NomeSobrenome = await waitUntilThenRunScriptThenReturn(`tbody tr:nth-child(${index}) .c2`,`document.querySelector("tbody tr:nth-child(${index}) .c2").textContent`,configs)
       currentUser.EnderecoDeEmail = await waitUntilThenRunScriptThenReturn(`tbody tr:nth-child(${index}) .c3`,`document.querySelector("tbody tr:nth-child(${index}) .c3").textContent`,configs)
-      currentUser.Envio = await waitUntilThenRunScriptThenReturn(`tbody tr:nth-child(${index}) .c4 `,`document.querySelector("tbody tr:nth-child(${index}) .c4 div:nth-child(1)").textContent`,configs)
-      if(currentUser.Envio == "Nenhum envio"){
- currentUser.Status = "NaoAvaliado"
-      }else{
-        if(!await waitUntilThenRunScriptThenReturn(`tbody tr:nth-child(${index}) .c4 `,`document.querySelector("tbody tr:nth-child(${index}) .c4 div:nth-child(2)").textContent`,configs)){
-          currentUser.Status = "NaoAvaliado"
-        }else{
-          currentUser.Status = await waitUntilThenRunScriptThenReturn(`tbody tr:nth-child(${index}) .c4 `,`document.querySelector("tbody tr:nth-child(${index}) .c4 div:nth-child(2)").textContent`,configs)
-        }
-      }
+   
     
       //format
     
@@ -120,6 +111,26 @@ const horaAbertura = dataConvertida.format('HH:mm');      // "00:00"
       currentUser.HoraLimite = formatDateLimite.hora;
 //
       currentUser.Nota = await waitUntilThenRunScriptThenReturn(`tbody tr:nth-child(${index}) .c8`,`document.querySelector("tbody tr:nth-child(${index}) .c8").textContent.replace("Nota",'')`,configs)
+
+      currentUser.Envio = await waitUntilThenRunScriptThenReturn(`tbody tr:nth-child(${index}) .c4 `,`document.querySelector("tbody tr:nth-child(${index}) .c4 div:nth-child(1)").textContent`,configs)
+      if(currentUser.Envio == "Nenhum envio"){
+ currentUser.Status = "NaoAvaliado"
+      }else
+      if(currentUser.Envio.includes("Enviado para avaliação") && currentUser.Nota.includes("0,00") || currentUser.Envio.includes("Enviado para avaliação") && currentUser.Nota.includes("-")){
+ currentUser.Status = "NaoAvaliado"
+      }
+
+      else{
+        if(!await waitUntilThenRunScriptThenReturn(`tbody tr:nth-child(${index}) .c4 `,`document.querySelector("tbody tr:nth-child(${index}) .c4 div:nth-child(2)").textContent`,configs)){
+          currentUser.Status = "NaoAvaliado"
+        }else{
+          currentUser.Status = await waitUntilThenRunScriptThenReturn(`tbody tr:nth-child(${index}) .c4 `,`document.querySelector("tbody tr:nth-child(${index}) .c4 div:nth-child(2)").textContent`,configs)
+        }
+      }
+
+      if(currentUser.Status != "Avaliado" && currentUser.Status != "NaoAvaliado" ){
+        currentUser.Status = "Avaliado"
+      }
       //format
       var UltimaModificacaoEnvio = await waitUntilThenRunScriptThenReturn(`tbody tr:nth-child(${index}) .c10`,`document.querySelector("tbody tr:nth-child(${index}) .c10").textContent`,configs)
       var formatDateUM = await FormatDateTarefa(UltimaModificacaoEnvio)
