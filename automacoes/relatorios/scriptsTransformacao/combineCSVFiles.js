@@ -3,7 +3,8 @@ const path = require('path')
 const csv = require('csv-parser');
 const fastcsv = require('fast-csv');
 const {filterData} = require("../scriptsTransformacao/filterData")
-async function combineCSVFiles(directoryPath, outputPath,filterUsers,filterDatas) {
+const {debugX} = require("../test/debug")
+async function combineCSVFiles(directoryPath, outputPath,filterUsers,filterDatas,configs) {
     const files = fs.readdirSync(directoryPath).filter(file => file.endsWith('.csv'));
     let data = [];
   
@@ -26,7 +27,7 @@ async function combineCSVFiles(directoryPath, outputPath,filterUsers,filterDatas
   
     // Chama a função `t` para manipular os dados
     data = await filterData(data,filterUsers,filterDatas)
-   
+    // await debugX(data,configs)
     // Cria o arquivo CSV combinado
     const outputFilePath = path.join(outputPath, 'RelatorioLogs.csv');
     const ws = fs.createWriteStream(outputFilePath);

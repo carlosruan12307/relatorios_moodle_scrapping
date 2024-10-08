@@ -1,4 +1,4 @@
-async function debug(configs,data){
+async function debugX(data,configs){
     return new Promise(async (resolve,reject) => {
       await configs.fs.writeFile('./test/debug.json', JSON.stringify(data,null,4), (err) => {
         if (err) {
@@ -11,4 +11,4 @@ async function debug(configs,data){
     })
   }
 
-  module.exports={debug}
+  module.exports={debugX}

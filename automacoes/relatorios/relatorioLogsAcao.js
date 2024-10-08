@@ -10,7 +10,7 @@ const {waitForDownloadCompletion} = require("./scriptsAutomacaoGeral/waitDownloa
 const {formatDate} = require("./scriptsTransformacao/formatDateExtenso")
 const {formatDateString} = require("./scriptsTransformacao/formatDateExtenso")
 const {combineCSVFiles} = require("./scriptsTransformacao/combineCSVFiles")
-const {debug} = require("./test/debug")
+const {debug, debugX} = require("./test/debug")
 const ExcelJS = require('exceljs');
 const csv = require('csv-parser');
 const fastcsv = require('fast-csv');
@@ -74,7 +74,7 @@ async function relatorioExcelTeste(dias = [], acoes = ["Ver", "Todas as mudança
   const configs = { fs, Builder, By, Key, until, chrome, options, driver }
 
   await loginMoodle("730550955", "19082000", configs);
-  await driver.get("https://ead.unifor.br/ava/course/view.php?id=68907")
+  await driver.get("https://ead.unifor.br/ava/course/view.php?id=69412")
   var oneTimeClickEdADM = await ClicarBotaoEditarADM(configs);
   oneTimeClickEdADM();
   await configs.driver.sleep(3000)
@@ -177,9 +177,9 @@ async function relatorioExcelTeste(dias = [], acoes = ["Ver", "Todas as mudança
             //   dataF.push(novoObjeto)
           }
       });
-      if(indexT == 0){
-        await debug(configs,data)
-       }
+    //   if(indexT == 0){
+    //     await debug(configs,data)
+    //    }
        // Split "Hora" column into "Data" and "Tempo"
 
      
@@ -236,16 +236,18 @@ csvWriter.writeRecords(data)
     .catch((err) => {
         console.error('Erro ao escrever o arquivo CSV:', err);
     });
- 
+       if(indexT == indexT.length - 1){
+        await debugX(data,configs)
+       }
       console.log('Processamento concluído.');
 
   }
   
 
   await criarPasta(path.join(__dirname,`./relatorioLogs/${nomeDisciplina}`))
-  await combineCSVFiles(path.join(__dirname,"./relatorioLogs"), path.join(__dirname,`./relatorioLogs/${nomeDisciplina}`),filterUsers,datasFormat)
+  await combineCSVFiles(path.join(__dirname,"./relatorioLogs"), path.join(__dirname,`./relatorioLogs/${nomeDisciplina}`),filterUsers,datasFormat,configs)
 
-  await deleteCSVFiles(path.join(__dirname,"./relatorioLogs"));
+//   await deleteCSVFiles(path.join(__dirname,"./relatorioLogs"));
 }
 
 
