@@ -57,7 +57,7 @@ async function relatorioExcelTeste(dias = [], acoes = ["Ver", "Todas as mudança
   options.addArguments('--disable-dev-shm-usage');
   var oneTime = false;
   options.setUserPreferences({
-      'download.default_directory': 'C:\\Users\\730550955\\Desktop\\clean-git\\automacoes\\relatorios\\relatorioLogs',
+      'download.default_directory': path.join(__dirname,'./relatorioLogs'),
       'download.prompt_for_download': false,
       'download.directory_upgrade': true,
       'safebrowsing_for_trusted_sources_enabled': false,
@@ -103,7 +103,7 @@ async function relatorioExcelTeste(dias = [], acoes = ["Ver", "Todas as mudança
 
   aba.sheetName = nomeDisciplina;
 
-  for (let indexT = 0; indexT < 2; indexT++) {
+  for (let indexT = 0; indexT < acoes.length ; indexT++) {
 
       await waitUntilThenChangeSelectIndexOption("#menuuser", 0, configs)
       await waitUntilThenChangeSelectIndexOption("#menudate", 0, configs)
@@ -236,7 +236,7 @@ csvWriter.writeRecords(data)
     .catch((err) => {
         console.error('Erro ao escrever o arquivo CSV:', err);
     });
-       if(indexT == indexT.length - 1){
+       if(indexT == acoes.length - 1){
         await debugX(data,configs)
        }
       console.log('Processamento concluído.');

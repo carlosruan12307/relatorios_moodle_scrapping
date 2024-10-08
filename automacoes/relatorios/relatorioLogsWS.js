@@ -7,7 +7,7 @@ async function relatorioLogsWS(){
     options.addArguments('--disable-dev-shm-usage');
     var oneTime = false;
     options.setUserPreferences({
-        'download.default_directory': 'C:\\Users\\730550955\\Desktop\\clean-git\\automacoes\\relatorios\\relatorioLogs',
+        'download.default_directory': path.join(__dirname,'./relatorioLogs'),
         'download.prompt_for_download': false,
         'download.directory_upgrade': true,
         'safebrowsing_for_trusted_sources_enabled': false,
