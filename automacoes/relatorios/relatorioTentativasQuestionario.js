@@ -27,7 +27,7 @@ async function relatorioTentativasQuestionario(){
         await waitUntilThenRunScript("button",`[...document.querySelectorAll("button")].filter((e) => e.textContent.includes("Download"))[0].click()`,configs)
     
             console.log('CSV NOTAS gerado e salvo em:', filePath);
-   var urlEstatistica = await waitUntilThenRunScriptThenReturn("select",`[...document.querySelectorAll("option")].filter((e) => e.textContent.includes("Estatísticas"))[0].value`,configs)
+            var urlEstatistica = await waitUntilThenRunScriptThenReturn("select",`[...document.querySelectorAll("option")].filter((e) => e.textContent.includes("Estatísticas"))[0].value`,configs)
             await configs.driver.get(`https://ead.unifor.br/ava${urlEstatistica}`)
             await waitUntilThenRunScript("button",`[...document.querySelectorAll("button")].filter((e) => e.textContent.includes("Download"))[1].click()`,configs)
     }

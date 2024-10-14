@@ -55,6 +55,27 @@ async function readExcelFileFull(filePath) {
           .on('error', (error) => reject(error)); // Rejeita a Promise em caso de erro
   });
 }
+async function readExcelFileFullXLSX(filePath) {
+  try {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(filePath);
 
+    const results = [];
+    
+    workbook.eachSheet((sheet) => {
+      const sheetData = [];
+      
+      sheet.eachRow((row) => {
+        sheetData.push(row.values.slice(1)); // Remove o índice zero que está vazio
+      });
 
-module.exports={readExcel,readExcelFileFull}
+      results.push({ sheetName: sheet.name, data: sheetData });
+    });
+
+    return results;
+  } catch (error) {
+    throw new Error(`Erro ao ler o arquivo Excel: ${error.message}`);
+  }
+}
+
+module.exports={readExcel,readExcelFileFull,readExcelFileFullXLSX}
