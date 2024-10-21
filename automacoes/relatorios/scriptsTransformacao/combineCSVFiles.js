@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path')
 const csv = require('csv-parser');
 const fastcsv = require('fast-csv');
+const xlsx = require('xlsx');
 const {filterData} = require("../scriptsTransformacao/filterData")
 const {debugX} = require("../test/debug")
 async function combineCSVFiles(directoryPath, outputPath,filterUsers,filterDatas,configs) {
@@ -44,4 +45,38 @@ async function combineCSVFiles(directoryPath, outputPath,filterUsers,filterDatas
     console.log('Os arquivos CSV foram combinados em', outputFilePath);
   }
 
-  module.exports={combineCSVFiles}
+
+  
+  async function combineXLSXFiles(directoryPath, outputPath) {
+    const files = fs.readdirSync(directoryPath).filter(file => file.endsWith('.xlsx'));
+    let data = [];
+  
+    for (const file of files) {
+      const filePath = path.join(directoryPath, file);
+      const workbook = xlsx.readFile(filePath);
+      const sheetNames = workbook.SheetNames;
+  
+      sheetNames.forEach(sheetName => {
+        const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+        data = data.concat(sheetData);
+      });
+    }
+  
+    // // Filtra os dados com base nas suas funções personalizadas
+    // data = await filterData(data, filterUsers, filterDatas);
+  
+    // Cria um novo workbook para o arquivo de saída
+    const newWorkbook = xlsx.utils.book_new();
+    const newWorksheet = xlsx.utils.aoa_to_sheet(data);
+    xlsx.utils.book_append_sheet(newWorkbook, newWorksheet, 'relatorioAgendamentoFinal');
+  
+    // Salva o arquivo combinado em .xlsx
+    const outputFilePath = path.join(outputPath, 'relatorioAgendamentoFinal.xlsx');
+    xlsx.writeFile(newWorkbook, outputFilePath);
+  
+    console.log('Os arquivos XLSX foram combinados em', outputFilePath);
+  }
+  
+
+  
+  module.exports={combineCSVFiles,combineXLSXFiles}

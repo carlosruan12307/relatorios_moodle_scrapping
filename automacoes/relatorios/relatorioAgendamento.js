@@ -9,6 +9,8 @@ const path = require('path')
 var fs = require("fs");
 const { waitForDownloadCompletion, waitForAllDownloadsCompletion } = require('./scriptsAutomacaoGeral/waitDownloadFinish');
 const { jsonToXlsx } = require('./scriptsTransformacao/jsonToCSV');
+const { combineXLSXFiles } = require('./scriptsTransformacao/combineCSVFiles');
+const { waitElementThenReturnTextContent } = require('./scriptsAutomacaoGeral/geral');
 async function relatorioAgendamento(){
     const { Builder, By, Key,until } = require('selenium-webdriver');
     const chrome = require('selenium-webdriver/chrome');
@@ -29,10 +31,15 @@ async function relatorioAgendamento(){
   // primeiro item do data sao as colunas
   var headers = [
     "Nome",
-
+    "Matricula",
     "Endereço de e-mail",
     "Grupo",
-    "Escolha"
+    "Escolha",
+    "Data",
+    "Hora",
+    "Bloco",
+    "Laboratorio",
+    "Disciplina"
   ]
   var excelXLSX = {
     "sheetName" : "",
@@ -50,12 +57,13 @@ async function relatorioAgendamento(){
       var oneTimeClickEdADM = await ClicarBotaoEditarADM(configs);
       oneTimeClickEdADM();
 
-      for (let index = 0; index < 40; index++) {
+      for (let index = 0; index < 2; index++) {
         var url =  await driver.getCurrentUrl()
       //   const regex = /[?&]id=(\d+)/;
       // const match = url.match(regex);
       // const id = match ? match[1] : null;
        await waitUntilThenRunScript("#agendamento1chamada",`[...document.querySelectorAll(".choice")][${index}].querySelector(".actions .dropdown .dropdown-menu a:nth-child(1)").click()`,configs)
+       var nomeRecurso = await waitElementThenReturnTextContent(".page-header-headings h1",configs)
        await waitUntilThenRunScript("a",`[...document.querySelectorAll("a")].filter((e) =>   e.textContent.includes("Respostas"))[0].click()`,configs)
        await waitUntilThenRunScript("a",`[...document.querySelectorAll("button")].filter((e) =>   e.textContent.includes("Download em formato Excel"))[0].click()`,configs)
        await waitForAllDownloadsCompletion(path.join(__dirname,"./relatorioLogs/relatorioAgendamento"))
@@ -72,18 +80,29 @@ async function relatorioAgendamento(){
           dataWithouSheetName[index].splice(1,1)
                    // Utilizando regex para encontrar os códigos dos cursos
 const regex = /([A-Z]\d{3})/g; // A regex captura letras seguidas de três dígitos
-const codigos = element[2].match(regex); // Retorna um array com os códigos
+const codigos = element[3].match(regex); // Retorna um array com os códigos
 
 // Juntando os códigos em uma string separados por espaço
 const resultado = codigos.join(' '); 
 
-          element[2] = resultado
+          element[3] = resultado
+
+          var partes = element[4].split(", ")
+       
+          element.push(partes[0])
+          element.push(partes[1])
+          element.push(partes[2])
+          element.push(partes[3])
+          element[9] = nomeRecurso.split(" - ")[0]
         }
+
         data.data[0] = headers
         data.data = dataWithouSheetName;
       await debugX(data,configs)
-        await jsonToXlsx(data,path.join(__dirname,"./relatorioLogs/relatorioAgendamento"),"kek.xlsx")
+        await jsonToXlsx(data,path.join(__dirname,"./relatorioLogs/relatorioAgendamento/relatorioModificado"),`kek${index}.xlsx`)
+        await configs.driver.get(url)
       }
+      await combineXLSXFiles(path.join(__dirname,"./relatorioLogs/relatorioAgendamento/relatorioModificado"),"N:\\ÁREAS DESENVOLVIMENTO DE PROJETOS\\teste")
 }
 relatorioAgendamento()
 module.exports={relatorioAgendamento}
